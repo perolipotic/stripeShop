@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
+import { resolve } from "q";
 
 const config = {
   apiKey: "AIzaSyBt0SVnboB4P1wusEonpaA6O9arc-uY85Q",
@@ -71,10 +72,22 @@ export const convertCollectionsSnapToMap = collections => {
   }, {});
 };
 
-const provider = new firebase.auth.GoogleAuthProvider();
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged(userAuth => {
+      unsubscribe();
+      resolve(userAuth);
+    }, reject);
+  });
+};
 
-provider.setCustomParameters({ propmpt: "select_account", display: "popup" });
+export const googleProvider = new firebase.auth.GoogleAuthProvider();
 
-export const singInWithGoogle = () => auth.signInWithPopup(provider);
+googleProvider.setCustomParameters({
+  propmpt: "select_account",
+  display: "popup"
+});
+
+export const singInWithGoogle = () => auth.signInWithPopup(googleProvider);
 
 export default firebase;
